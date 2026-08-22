@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>2:13 — 外を見るな</title>
+<style>
+:root{--ink:#eef4f3;--muted:#95a6a5;--accent:#b7ffcb;--danger:#ff7d86;--glass:rgba(5,10,14,.78)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;height:100%;background:#020405;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;overflow:hidden}
+#game{position:relative;width:100%;height:100dvh;max-width:520px;margin:auto;background:#080d0f;overflow:hidden;isolation:isolate}
+#scene{position:absolute;inset:0;transition:filter .8s ease,transform 2s ease;background:radial-gradient(circle at 75% 20%,rgba(194,229,225,.13),transparent 18%),linear-gradient(180deg,#11191c 0 25%,#091012 25% 100%)}
+#scene:before{content:"";position:absolute;left:9%;right:9%;top:20%;height:53%;background:linear-gradient(90deg,#121d20 0 17%,#091113 17% 64%,#101a1c 64% 100%);box-shadow:inset 0 0 40px #000,0 30px 80px #000;border-bottom:8px solid #050708}
+.window{position:absolute;width:31%;height:27%;right:14%;top:25%;border:8px solid #182326;background:linear-gradient(90deg,transparent 47%,#26373a 47% 53%,transparent 53%),linear-gradient(0deg,transparent 48%,#26373a 48% 53%,transparent 53%),linear-gradient(#0a1115,#111c21);box-shadow:0 0 20px rgba(149,195,199,.08)}
+.curtain{position:absolute;inset:-5px;background:repeating-linear-gradient(90deg,rgba(28,43,46,.92) 0 11%,rgba(13,22,24,.95) 11% 18%);transform-origin:left;transition:transform 1.4s ease,opacity 1s ease}.curtain.open{transform:scaleX(.18);opacity:.72}
+.table{position:absolute;left:23%;bottom:26%;width:52%;height:12%;background:linear-gradient(#182022,#0b1011);box-shadow:0 12px 20px #000}.table:after{content:"";position:absolute;left:8%;right:8%;top:-7px;height:8px;background:#242f31}
+.phone{position:absolute;width:34px;height:58px;left:48%;bottom:38%;background:#071014;border:2px solid #27383a;border-radius:7px;box-shadow:0 0 0 1px #000,0 0 18px rgba(130,255,190,.22);transform:rotate(-5deg);transition:box-shadow .25s ease}.phone.ring{animation:ring .15s linear 0s 9;box-shadow:0 0 24px rgba(148,255,201,.65)}
+@keyframes ring{50%{transform:rotate(5deg) translateX(2px)}}
+.door{position:absolute;left:8%;top:29%;width:18%;height:46%;background:linear-gradient(90deg,#121a1d,#080c0e);border:4px solid #1b2628}.door:after{content:"";position:absolute;width:6px;height:6px;border-radius:50%;right:8px;top:51%;background:#677879}
+.shadow-under{position:absolute;left:9%;top:74%;width:16%;height:20px;background:linear-gradient(180deg,rgba(0,0,0,.9),transparent);filter:blur(2px);opacity:0;transition:opacity 1s}.shadow-under.show{opacity:1}
+.figure{position:absolute;right:11%;top:31%;width:8%;height:32%;opacity:0;filter:blur(1px);transition:opacity .15s;background:linear-gradient(#020303,#000);border-radius:40% 40% 12% 12%}.figure.show{opacity:.82}.figure.flash{animation:flash .8s ease 1}@keyframes flash{0%,100%{opacity:0}20%{opacity:.95}40%{opacity:0}65%{opacity:.7}}
+#grain{position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");mix-blend-mode:screen}
+#clock{position:absolute;top:max(18px,env(safe-area-inset-top));right:20px;font:600 15px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.13em;color:#a9b9b7;z-index:5;text-shadow:0 1px 8px #000}
+#chapter{position:absolute;top:max(18px,env(safe-area-inset-top));left:20px;font-size:12px;letter-spacing:.22em;color:#6f8381;z-index:5}
+#dialogue{position:absolute;left:14px;right:14px;bottom:max(14px,env(safe-area-inset-bottom));padding:18px 18px 16px;background:var(--glass);border:1px solid rgba(188,220,216,.13);backdrop-filter:blur(12px);border-radius:18px;z-index:8;box-shadow:0 18px 45px rgba(0,0,0,.35)}
+#speaker{font-size:12px;color:#91a5a2;letter-spacing:.15em;margin-bottom:8px;min-height:15px}#text{font-size:17px;line-height:1.78;min-height:84px;white-space:pre-wrap}.hint{font-size:11px;color:#637472;text-align:right;margin-top:7px;letter-spacing:.1em}
+#choices{display:grid;gap:10px;margin-top:14px}.choice{border:1px solid rgba(191,221,217,.15);background:rgba(18,28,31,.88);color:#f0f5f4;border-radius:14px;padding:14px 15px;text-align:left;font-size:15px;line-height:1.45}.choice:active{transform:scale(.985);background:#1b292c}.choice.danger{border-color:rgba(255,125,134,.32);color:#ffd8db}
+#phoneUI{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);z-index:12;backdrop-filter:blur(10px)}#phoneUI.show{display:flex}.phone-card{width:min(84%,340px);border:8px solid #101719;border-radius:36px;background:#06100d;box-shadow:0 0 0 2px #344442,0 30px 80px #000;padding:24px 17px 25px}.phone-head{font-size:12px;color:#78918c;text-align:center;padding-bottom:16px;border-bottom:1px solid #172723}.msg{max-width:88%;padding:11px 13px;border-radius:16px;margin:12px 0;font-size:16px;line-height:1.45;background:#16231f}.msg.unknown{background:#102a20;color:#d9ffe6}.phone-close{margin-top:16px;width:100%;border:0;border-radius:14px;padding:12px;background:#17231f;color:#c9d7d3}
+#start,#ending{position:absolute;inset:0;z-index:20;background:radial-gradient(circle at 50% 35%,#132124,#020405 68%);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:28px}.hidden{display:none!important}.title{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:clamp(35px,11vw,56px);letter-spacing:.12em;margin:0 0 12px}.sub{color:#879997;line-height:1.8;font-size:14px}.startbtn{margin-top:32px;border:1px solid #315047;background:#10241d;color:#dbffe8;border-radius:999px;padding:14px 28px;font-size:16px}.warning{margin-top:16px;color:#566563;font-size:11px}.ending-title{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:18px;letter-spacing:.2em;color:#98aca9}.ending-name{font-size:32px;margin:12px 0}.ending-copy{color:#aebbb9;line-height:1.9;max-width:370px}.ending-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;justify-content:center}.ending-actions button{border:1px solid #2b3d39;background:#101916;color:white;border-radius:999px;padding:12px 18px}
+.glitch{animation:glitch .15s linear 4}@keyframes glitch{0%{transform:translate(1px,0);filter:contrast(1.2)}50%{transform:translate(-2px,1px);filter:hue-rotate(20deg) contrast(1.5)}100%{transform:none}}
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="scene"><div class="window"><div id="curtain" class="curtain"></div></div><div class="door"></div><div id="shadow" class="shadow-under"></div><div class="table"></div><div id="phone" class="phone"></div><div id="figure" class="figure"></div></div>
+  <div id="grain"></div><div id="chapter">ROOM 02</div><div id="clock">2:13 AM</div>
+  <div id="dialogue" class="hidden"><div id="speaker"></div><div id="text"></div><div id="choices"></div><div id="hint" class="hint">TAP TO CONTINUE</div></div>
+  <div id="phoneUI"><div class="phone-card"><div class="phone-head">UNKNOWN</div><div id="messages"></div><button class="phone-close" id="closePhone">閉じる</button></div></div>
+  <div id="start"><h1 class="title">2:13</h1><div class="sub">外を見るな。<br>5〜10分の短編ホラーノベル</div><button id="startBtn" class="startbtn">はじめる</button><div class="warning">音をONにすると、少しだけ怖くなります。</div></div>
+  <div id="ending" class="hidden"><div class="ending-title">ENDING</div><div id="endingName" class="ending-name"></div><div id="endingCopy" class="ending-copy"></div><div class="ending-actions"><button id="retryBtn">最初から</button></div></div>
+</div>
+<script>
+const $=s=>document.querySelector(s);const game=$('#game'),dlg=$('#dialogue'),text=$('#text'),speaker=$('#speaker'),choices=$('#choices'),hint=$('#hint'),phone=$('#phone'),phoneUI=$('#phoneUI'),messages=$('#messages'),curtain=$('#curtain'),shadow=$('#shadow'),figure=$('#figure');
+let state={trust:0,curiosity:0,door:false,looked:false,phoneCount:0};let current='intro';let unlocked=false;let audioCtx=null;
+function tone(freq=220,dur=.08,vol=.025,type='sine'){try{audioCtx??=new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;o.type=type;g.gain.value=vol;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+dur);o.stop(audioCtx.currentTime+dur)}catch(e){}}
+function buzz(){phone.classList.add('ring');tone(90,.25,.04,'square');setTimeout(()=>phone.classList.remove('ring'),1500)}
+function foot(){[92,84,78].forEach((f,i)=>setTimeout(()=>tone(f,.18,.03,'sine'),i*500))}
+function glitch(){game.classList.add('glitch');tone(45,.25,.04,'sawtooth');setTimeout(()=>game.classList.remove('glitch'),800)}
+const scenes={
+intro:{s:'',t:'午前2時13分。\n目が覚めた。理由は分からない。',n:'free'},
+free:{s:'私',t:'部屋は静かだ。冷蔵庫の低い音だけが、やけに大きく聞こえる。',choices:[['もう一度眠ろう','ring'],['部屋を見回す','ring','curiosity']]},
+ring:{s:'',t:'——ブッ。\n\nテーブルの上で、スマートフォンが震えた。',effect:'buzz',choices:[['スマートフォンを見る','phone1']]},
+phone1:{phone:['外を見るな。'],after:'afterPhone'},
+afterPhone:{s:'私',t:'知らない番号。\nふざけたメッセージだ。……そう思った直後。',n:'tap'},
+tap:{s:'',t:'コツ。\n\n窓の向こうで、小さな音がした。',effect:'tap',choices:[['窓には近づかない','secondPhone','trust'],['カーテンに近づく','curtainNear','curiosity']]},
+curtainNear:{s:'私',t:'カーテンの隙間は細い。\n外は見えない。なのに——誰かに見られている感じがする。',n:'secondPhone'},
+secondPhone:{s:'',t:'また、スマートフォンが震えた。',effect:'buzz',choices:[['確認する','phone2']]},
+phone2:{phone:['今の音、聞こえた？'],after:'reaction'},
+reaction:{s:'私',t:'背中が冷たくなる。\nこいつは、部屋の中の音を知っている。',choices:[['「誰？」と返信する','replyWho'],['無視する','footsteps','trust']]},
+replyWho:{s:'',t:'送信した。\n既読は、一瞬でついた。',n:'phone3'},
+phone3:{phone:['質問はするな。','玄関から離れろ。'],after:'footsteps'},
+footsteps:{s:'',t:'……廊下。\n\nゆっくり、足音が近づいてくる。',effect:'foot',n:'doorChoice'},
+doorChoice:{s:'私',t:'足音は、玄関の前で止まった。\nノックはない。',choices:[['玄関を見に行く','door','curiosity'],['その場から動かない','phoneDoor','trust']]},
+door:{s:'',t:'ドアの下。\n廊下の光を塞ぐように、誰かの影が立っている。',effect:'shadow',n:'phoneDoor'},
+phoneDoor:{s:'',t:'スマートフォンが震える。',effect:'buzz',choices:[['見る','phone4']]},
+phone4:{phone:['玄関には行くなと言っただろ。'],after:'lie'},
+lie:{s:'私',t:'……待て。\n\n最初のメッセージは「外を見るな」だった。\n玄関のことなんて、一度も——',effect:'glitch',n:'inside'},
+inside:{s:'',t:'背後で、床が鳴った。\n\n部屋の中から。',choices:[['振り返る','turn','curiosity'],['振り返らない','dontTurn','trust']]},
+turn:{s:'',t:'何もいない。\n\nただ、さっき閉まっていた寝室のドアが、少しだけ開いている。',effect:'figure',n:'finalPhone'},
+dontTurn:{s:'私',t:'振り返らない。\n見たら、何かが「いる」ことになってしまう気がした。',n:'finalPhone'},
+finalPhone:{s:'',t:'最後にもう一度、スマートフォンが震えた。',effect:'buzz',choices:[['メッセージを見る','phone5']]},
+phone5:{phone:['後ろを見るな。','いま、あなたのスマホを見ている。'],after:'final'},
+final:{s:'私',t:'画面が暗くなる。\n黒いガラスに、自分の顔が映る。\n\n——その後ろに、もう一つ。',effect:'figure',choices:[['スマホを伏せて目を閉じる','endObey'],['振り返る','endLook','danger'],['カーテンを開ける','endWindow','danger']]},
+endObey:{end:['指示通り','朝、目を開けると午前7時だった。玄関の影は消えていた。\n\nスマホには新しい通知が一件。\n\n「今日はちゃんとできたね。」']},
+endLook:{end:['同居人','振り返った瞬間、部屋には誰もいなかった。\n\nただし、スマホのインカメラには、最初から最後まであなたの背後に立つ人影が録画されていた。']},
+endWindow:{end:['外側','カーテンを開けた。窓の向こうには誰もいない。\n\n安心した瞬間、ガラスに映った。\n\n見ていたのは、外からではなかった。']}
+};
+function apply(flag){if(flag==='trust')state.trust++;if(flag==='curiosity')state.curiosity++}
+function show(id){current=id;const sc=scenes[id];choices.innerHTML='';dlg.classList.remove('hidden');if(sc.effect){if(sc.effect==='buzz')buzz();if(sc.effect==='tap')tone(520,.05,.035,'triangle');if(sc.effect==='foot')foot();if(sc.effect==='shadow')shadow.classList.add('show');if(sc.effect==='glitch')glitch();if(sc.effect==='figure'){figure.classList.add('flash');setTimeout(()=>figure.classList.remove('flash'),900)}}if(sc.phone){openPhone(sc.phone,sc.after);return}if(sc.end){endGame(sc.end[0],sc.end[1]);return}speaker.textContent=sc.s||'';text.textContent=sc.t||'';if(sc.choices){hint.style.display='none';sc.choices.forEach(c=>{const b=document.createElement('button');b.className='choice'+(c[3]==='danger'?' danger':'');b.textContent=c[0];b.onclick=()=>{apply(c[2]);show(c[1])};choices.appendChild(b)})}else{hint.style.display='block';dlg.onclick=()=>{dlg.onclick=null;show(sc.n)}}}
+function openPhone(msgs,after){state.phoneCount++;messages.innerHTML='';msgs.forEach((m,i)=>{const d=document.createElement('div');d.className='msg unknown';d.textContent=m;messages.appendChild(d)});phoneUI.classList.add('show');phoneUI.dataset.after=after}
+$('#closePhone').onclick=()=>{const n=phoneUI.dataset.after;phoneUI.classList.remove('show');show(n)};
+function endGame(name,copy){dlg.classList.add('hidden');$('#endingName').textContent=name;$('#endingCopy').textContent=copy;$('#ending').classList.remove('hidden');localStorage.setItem('novel213_lastEnding',name)}
+$('#startBtn').onclick=()=>{$('#start').classList.add('hidden');audioCtx??=new (window.AudioContext||window.webkitAudioContext)();show('intro')};$('#retryBtn').onclick=()=>location.reload();
+</script>
+</body></html>
