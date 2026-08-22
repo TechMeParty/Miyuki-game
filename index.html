@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Expat Survival</title>
+<style>
+body{margin:0;background:#0d1117;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:520px;margin:0 auto;padding:18px}h1{font-size:30px;margin:6px 0 2px}p{color:#b8c0cc}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}.stat,.card{background:#161b22;border:1px solid #30363d;border-radius:16px}.stat{padding:10px;text-align:center;font-size:12px;color:#9da7b3}.stat b{display:block;color:#fff;font-size:20px;margin-top:4px}.card{padding:18px}.small{font-size:13px;color:#8b949e}#title{font-size:23px;font-weight:800;line-height:1.35;margin:8px 0}#desc{line-height:1.55;color:#d0d7de}button{width:100%;padding:15px;margin-top:10px;border:0;border-radius:13px;font-weight:800;font-size:16px;background:#238636;color:#fff}button.alt{background:#21262d;border:1px solid #3d444d}#result{display:none;text-align:center}.score{font-size:48px;font-weight:900;margin:12px 0}#msg{min-height:22px;color:#f0c36a;margin-top:10px;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>Expat Survival</h1><p>アメリカ駐在生活を12か月生き残れ。</p>
+<div class="stats"><div class="stat">MONEY<b id="money">$5,000</b></div><div class="stat">ENERGY<b id="energy">70</b></div><div class="stat">FAMILY<b id="family">70</b></div></div>
+<section id="game" class="card"><div id="month" class="small"></div><div id="title"></div><div id="desc"></div><div id="buttons"></div><div id="msg"></div></section>
+<section id="result" class="card"><div class="small">RESULT</div><h2 id="resultTitle"></h2><div id="resultText"></div><div id="score" class="score"></div><button onclick="start()">もう一度</button></section>
+</main>
+<script>
+var events=[
+["Daycareの請求","今月の請求は $1,850。どうする？",[["払う",-1850,-3,10,"家族は安心。財布は痛い。"],["安いところを探す",-900,-12,-4,"節約したが疲れた。"]]],
+["夜10:30にTeams","上司から『5分だけいい？』",[["出る",400,-18,-10,"仕事評価は上がった。"],["明日の朝に返す",0,5,5,"意外と何も起きなかった。"]]],
+["車の警告灯","修理見積もりは $1,200。",[["修理する",-1200,3,2,"安心を買った。"],["様子を見る",0,-8,-5,"毎朝ちょっと怖い。"]]],
+["日本から偉い人が来る","会食・送迎・資料、全部あなた担当。",[["全力対応",700,-22,-8,"仕事ポイント獲得。"],["チームに任せる",250,-6,2,"意外と回った。"]]],
+["Costcoで買いすぎた","合計 $420。巨大スナックまで買った。",[["受け入れる",-420,6,4,"しばらく買い物不要。"],["返品する",-80,-10,-2,"時間を失った。"]]],
+["3連休","旅行に行く？ 家で休む？",[["ロードトリップ",-900,8,18,"思い出が増えた。"],["家で寝る",-80,18,-3,"体力回復。"]]],
+["謎の医療費","保険はある。でも請求書の意味がわからない。",[["払う",-650,-3,2,"平和を買った。"],["保険会社に電話",-200,-15,1,"45分保留された。"]]],
+["昇給の話","責任も仕事も増える。",[["受ける",1800,-15,-7,"給料UP、自由時間DOWN。"],["断る",200,8,5,"生活は安定。"]]],
+["子どもが『帰りたくない』","アメリカ生活を楽しんでいる。",[["家族時間を増やす",-200,-3,18,"家族ポイント大幅UP。"],["仕事優先",500,-8,-12,"仕事は進んだ。"]]],
+["家賃更新 +12%","更新する？ 引っ越す？",[["更新",-900,2,4,"面倒は避けた。"],["引っ越す",-500,-20,2,"節約したが疲れた。"]]],
+["副業アイデア","ChatGPTで小さいサービスを作れそう。",[["週末に作る",900,-14,-4,"小さく売れた。"],["寝る",0,8,2,"体力温存。"]]],
+["最終月","最後にどうする？",[["もう1年残る",1000,-5,-2,"駐在生活は続く。"],["日本へ帰る",200,6,6,"ひとまず区切り。"]]]
+];
+var s,i;
+function start(){s={money:5000,energy:70,family:70};i=0;document.getElementById('game').style.display='block';document.getElementById('result').style.display='none';draw()}
+function upd(){document.getElementById('money').textContent='$'+s.money.toLocaleString();document.getElementById('energy').textContent=s.energy;document.getElementById('family').textContent=s.family}
+function draw(){if(i>=events.length||s.energy<=0||s.family<=0||s.money<=-3000){end();return}var e=events[i];document.getElementById('month').textContent='MONTH '+(i+1)+' / '+events.length;document.getElementById('title').textContent=e[0];document.getElementById('desc').textContent=e[1];document.getElementById('msg').textContent='';var bs=document.getElementById('buttons');bs.innerHTML='';e[2].forEach(function(c,idx){var b=document.createElement('button');b.textContent=c[0];if(idx>0)b.className='alt';b.onclick=function(){s.money+=c[1];s.energy=Math.max(0,Math.min(100,s.energy+c[2]));s.family=Math.max(0,Math.min(100,s.family+c[3]));document.getElementById('msg').textContent=c[4];upd();Array.from(bs.children).forEach(function(x){x.disabled=true});setTimeout(function(){i++;draw()},450)};bs.appendChild(b)});upd()}
+function end(){document.getElementById('game').style.display='none';document.getElementById('result').style.display='block';var t='SURVIVED',tx='12か月を生き残った。';if(s.energy<=0){t='BURNED OUT';tx='体力が尽きた。'}else if(s.family<=0){t='GAME OVER';tx='家庭ポイントが尽きた。'}else if(s.money<=-3000){t='BANKRUPT';tx='資金が尽きた。'}document.getElementById('resultTitle').textContent=t;document.getElementById('resultText').textContent=tx+' Money $'+s.money.toLocaleString()+' / Energy '+s.energy+' / Family '+s.family;document.getElementById('score').textContent=Math.max(0,Math.round(s.money/10+s.energy*8+s.family*10+i*100)).toLocaleString()}
+start();
+</script>
+</body>
+</html>
