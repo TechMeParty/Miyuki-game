@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<title>Room 03</title>
+<style>
+:root{--bg:#050505;--ink:#eee;--muted:#9a9a9a;--red:#8d1010;--panel:#111;--line:#2a2a2a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#000;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100%;overflow:hidden}
+body{display:flex;justify-content:center;align-items:center}
+#app{width:min(100vw,540px);height:100dvh;max-height:900px;background:#050505;position:relative;overflow:hidden;border-left:1px solid #111;border-right:1px solid #111}
+#top{position:absolute;top:0;left:0;right:0;z-index:20;padding:calc(10px + env(safe-area-inset-top)) 14px 8px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(#000,transparent)}
+#title{font-weight:800;letter-spacing:.18em;font-size:13px}#fear{font-size:12px;color:#aaa}.fearbar{display:inline-block;width:74px;height:6px;background:#222;border-radius:99px;overflow:hidden;vertical-align:middle;margin-left:6px}.fearbar span{display:block;height:100%;width:10%;background:#8d1010;transition:.3s}
+#room{position:absolute;inset:0;background:linear-gradient(#0b0b0b,#030303);overflow:hidden}
+.wall{position:absolute;left:0;right:0;top:11%;bottom:22%;background:linear-gradient(180deg,#161616,#101010 60%,#0b0b0b);border-bottom:5px solid #080808}
+.floor{position:absolute;left:0;right:0;bottom:0;height:27%;background:repeating-linear-gradient(92deg,#0e0e0e 0 38px,#0a0a0a 38px 40px);transform:perspective(220px) rotateX(10deg);transform-origin:bottom}
+.obj{position:absolute;cursor:pointer;filter:brightness(.68);transition:.2s;user-select:none}.obj:active{filter:brightness(1)}
+#door{right:7%;top:23%;width:24%;height:50%;background:#17120f;border:5px solid #28201b;box-shadow:inset 0 0 0 2px #0d0b09}.knob{position:absolute;width:9px;height:9px;border-radius:50%;background:#6c5b35;left:16%;top:52%}
+#mirror{left:8%;top:23%;width:23%;height:32%;border:6px solid #1d1d1d;background:linear-gradient(145deg,#21272b,#080a0b);box-shadow:0 0 18px #000}.shadowface{position:absolute;display:none;left:38%;top:20%;width:22%;height:40%;border-radius:50%;background:#030303;box-shadow:0 0 20px #000}
+#bed{left:4%;bottom:16%;width:52%;height:20%;background:#171717;border:3px solid #242424;transform:skewX(-8deg)}#bed:before{content:"";position:absolute;left:8%;top:8%;width:36%;height:35%;background:#222;border-radius:8px}
+#phone{left:46%;top:52%;width:10%;height:7%;background:#191919;border:2px solid #333;border-radius:5px;box-shadow:0 0 10px #000}
+#window{left:36%;top:18%;width:24%;height:24%;border:6px solid #202020;background:linear-gradient(#05080a,#020203)}#window:before,#window:after{content:"";position:absolute;background:#202020}#window:before{width:4px;top:0;bottom:0;left:50%}#window:after{height:4px;left:0;right:0;top:50%}
+#figure{position:absolute;display:none;left:44%;bottom:3%;width:12%;height:74%;background:linear-gradient(#050505,#000);clip-path:polygon(38% 0,62% 0,75% 13%,70% 42%,92% 100%,8% 100%,30% 42%,25% 13%);opacity:.92}
+#message{position:absolute;left:12px;right:12px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:30;background:rgba(4,4,4,.92);border:1px solid #2a2a2a;border-radius:14px;padding:14px 14px 13px;min-height:96px;box-shadow:0 10px 40px #000}
+#speaker{font-size:11px;color:#777;letter-spacing:.15em;margin-bottom:7px}#text{font-size:16px;line-height:1.55;min-height:48px}.hint{font-size:11px;color:#666;margin-top:6px;text-align:right}
+#choices{position:absolute;left:12px;right:12px;bottom:calc(126px + env(safe-area-inset-bottom));z-index:31;display:none;gap:8px}.choice{width:100%;padding:13px;border-radius:12px;border:1px solid #3a3a3a;background:#111;color:#eee;font-weight:700;font-size:15px}.choice.danger{background:#310b0b;border-color:#571313}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:90}#black{position:absolute;inset:0;background:#000;opacity:0;pointer-events:none;z-index:89;transition:.5s}
+#start{position:absolute;inset:0;z-index:100;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;text-align:center}#start h1{font-size:38px;letter-spacing:.22em;margin:0 0 6px}#start p{color:#777;line-height:1.6;margin:8px 0 26px}.startbtn{border:1px solid #555;background:#111;color:#fff;padding:14px 34px;border-radius:999px;font-weight:800;font-size:16px}.tiny{margin-top:18px;color:#444;font-size:11px}
+#ending{position:absolute;inset:0;z-index:110;background:#000;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px}#ending h2{font-size:28px;letter-spacing:.14em;margin-bottom:10px}#ending p{color:#aaa;line-height:1.7}.restart{margin-top:20px;border:1px solid #444;background:#111;color:white;border-radius:12px;padding:12px 22px}
+.shake{animation:shake .22s linear 2}@keyframes shake{0%{transform:translate(0)}25%{transform:translate(-6px,2px)}50%{transform:translate(5px,-2px)}75%{transform:translate(-3px,1px)}100%{transform:translate(0)}}
+@media(max-height:650px){#message{min-height:82px}#choices{bottom:110px}.obj{transform:scale(.92)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="top"><div id="title">ROOM 03</div><div id="fear">FEAR <span class="fearbar"><span id="fearFill"></span></span></div></div>
+  <div id="room">
+    <div class="wall"></div><div class="floor"></div>
+    <div id="window" class="obj"></div>
+    <div id="mirror" class="obj"><div id="shadowface" class="shadowface"></div></div>
+    <div id="door" class="obj"><div class="knob"></div></div>
+    <div id="bed" class="obj"></div>
+    <div id="phone" class="obj"></div>
+    <div id="figure"></div>
+  </div>
+  <div id="choices"></div>
+  <div id="message"><div id="speaker">YOU</div><div id="text">……ここは、どこだ。</div><div class="hint">部屋の中をタップして調べる</div></div>
+  <div id="flash"></div><div id="black"></div>
+  <div id="start"><h1>ROOM 03</h1><p>午前3時03分。<br>知らない部屋で目を覚ました。<br><br>ドアの向こうから、誰かが呼んでいる。</p><button class="startbtn" id="startBtn">目を開ける</button><div class="tiny">イヤホン推奨 / 約3〜5分</div></div>
+  <div id="ending"><h2 id="endTitle"></h2><p id="endText"></p><button class="restart" onclick="location.reload()">もう一度</button></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let fear=10, mirrorCount=0, doorCount=0, phoneCount=0, windowCount=0, bedCount=0, started=false, ended=false, clues=0;
+const text=$('text'), speaker=$('speaker'), choices=$('choices'), app=$('app');
+function setFear(v){fear=Math.max(0,Math.min(100,v));$('fearFill').style.width=fear+'%'; if(fear>70) app.classList.add('shake'); setTimeout(()=>app.classList.remove('shake'),450)}
+function say(t,s='YOU'){speaker.textContent=s;text.textContent=t;}
+function tone(freq=180,dur=.12,vol=.025){try{const A=new (window.AudioContext||window.webkitAudioContext)();const o=A.createOscillator(),g=A.createGain();o.frequency.value=freq;o.type='sine';g.gain.value=vol;o.connect(g);g.connect(A.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,A.currentTime+dur);o.stop(A.currentTime+dur+.02)}catch(e){}}
+function flash(){const f=$('flash');f.style.transition='none';f.style.opacity=.85;setTimeout(()=>{f.style.transition='.25s';f.style.opacity=0},35)}
+function showChoices(arr){choices.innerHTML='';choices.style.display='grid';arr.forEach(c=>{const b=document.createElement('button');b.className='choice'+(c.danger?' danger':'');b.textContent=c.label;b.onclick=()=>{choices.style.display='none';c.run()};choices.appendChild(b)})}
+function end(title,body){ended=true;$('ending').style.display='flex';$('endTitle').textContent=title;$('endText').innerHTML=body}
+$('startBtn').onclick=()=>{started=true;$('start').style.display='none';say('……ここは、どこだ。')};
+$('mirror').onclick=()=>{if(!started||ended)return;mirrorCount++;tone(230,.08);if(mirrorCount===1){clues++;say('鏡だ。顔色が悪い。……いや、後ろに何か映った？');setFear(fear+10)}else if(mirrorCount===2){$('shadowface').style.display='block';flash();say('今度は見間違いじゃない。僕の後ろに、誰かいる。');setFear(fear+22)}else{say('鏡の中の「僕」が、少し遅れて動いた。','???');setFear(fear+15)}};
+$('phone').onclick=()=>{if(!started||ended)return;phoneCount++;tone(440,.18,.03);setFear(fear+8);if(phoneCount===1){clues++;say('受話器から、自分の声が聞こえる。','PHONE');setTimeout(()=>say('「ドアを……開けるな」','PHONE'),650)}else if(phoneCount===2){say('「ベッドの下を見ろ」','PHONE');setFear(fear+12)}else{say('ツー……ツー……ツー……。')}};
+$('window').onclick=()=>{if(!started||ended)return;windowCount++;if(windowCount===1){clues++;say('外は真っ暗だ。ここが何階なのかも分からない。')}else if(windowCount===2){$('figure').style.display='block';flash();tone(90,.35,.04);say('窓の外に、人が立っている。……ここ、何階だ？');setFear(fear+25)}else{say('もう誰もいない。……いや、ガラスに手形がある。');setFear(fear+10)}};
+$('bed').onclick=()=>{if(!started||ended)return;bedCount++;if(bedCount===1){say('シーツがまだ暖かい。僕以外の誰かが、ここにいた。');clues++}else{flash();tone(70,.25,.05);say('ベッドの下から、スマホが出てきた。画面には「03:03」。');setFear(fear+18);clues++}};
+$('door').onclick=()=>{if(!started||ended)return;doorCount++;tone(120,.1,.03);if(doorCount===1){say('鍵がかかっている。向こう側で、誰かが息をしている。');setFear(fear+8)}else if(doorCount===2){say('……コン、コン。','DOOR');setFear(fear+15)}else if(doorCount===3){flash();tone(55,.5,.05);say('「開けて」——自分の声だ。','DOOR');setFear(fear+20);showChoices([{label:'ドアから離れる',run:()=>say('足音も、向こう側へ遠ざかっていった。')},{label:'ドアを開ける',danger:true,run:()=>openDoor()}])}else{openDoor()}};
+function openDoor(){if(ended)return;$('black').style.opacity=.9;tone(48,.7,.06);setTimeout(()=>{$('black').style.opacity=0;if(clues>=4){end('ENDING 02 — THE OTHER SIDE','ドアの向こうにいたのは、<br>この部屋を外から見ている「あなた」だった。<br><br>そして今、部屋の中には誰もいない。')}else{end('ENDING 01 — DO NOT OPEN','ドアを開けた瞬間、<br>午前3時03分に戻った。<br><br>次に目を覚ました「誰か」も、<br>きっと同じドアを開ける。')}},800)}
+setTimeout(()=>{if(started&&!ended){tone(95,.25,.03);say('……コン。','DOOR');setFear(fear+5)}},30000);
+</script>
+</body>
+</html>
